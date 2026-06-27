@@ -1,0 +1,106 @@
+================================================================================
+MANUAL SVG EDITS (If not using build_gold.py)
+================================================================================
+
+For each SVG file in your source directory, apply these three regex replacements
+using your text editor's Find & Replace (or sed, perl, etc.):
+
+================================================================================
+REPLACEMENT 1: STROKE-WIDTH FIX
+================================================================================
+
+FIND:     stroke-width="0\.6"
+REPLACE:  stroke-width="1"
+FLAGS:    Global (replace all)
+REGEX:    Yes (dot is literal)
+
+Example:
+  BEFORE: <path stroke="#2C2C2C" stroke-width="0.6" stroke-linejoin="round" ...>
+  AFTER:  <path stroke="#2C2C2C" stroke-width="1" stroke-linejoin="round" ...>
+
+REASON: Eliminates sub-pixel rendering artifacts at 32px output.
+
+================================================================================
+REPLACEMENT 2: SHADOW OFFSET FIX
+================================================================================
+
+FIND:     <feOffset\s+dx="[^"]*"\s+dy="[^"]*"
+REPLACE:  <feOffset dx="0" dy="0"
+FLAGS:    Global (replace all), Regex enabled, Multi-line if available
+PATTERN:  Regex (matches any dx/dy values and normalizes to 0, 0)
+
+Example:
+  BEFORE: <feOffset dx="0.5" dy="0.8" in="SourceGraphic"/>
+  AFTER:  <feOffset dx="0" dy="0" in="SourceGraphic"/>
+
+REASON: Makes shadow symmetric (no offset bias toward top-left).
+
+================================================================================
+REPLACEMENT 3: SHADOW OPACITY (Optional enhancement)
+================================================================================
+
+FIND:     opacity="0\.35"
+REPLACE:  opacity="0.40"
+FLAGS:    Global, Regex enabled
+
+Example:
+  BEFORE: <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="coloredBlur" opacity="0.35"/>
+  AFTER:  <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="coloredBlur" opacity="0.40"/>
+
+REASON: Slightly more defined shadow without over-darkening.
+
+================================================================================
+TOOL-SPECIFIC EXAMPLES
+================================================================================
+
+VIM / NEOVIM:
+  :s/stroke-width="0\.6"/stroke-width="1"/g
+  :s/<feOffset\s\+dx="[^"]*"\s\+dy="[^"]*"/<feOffset dx="0" dy="0"/g
+  :s/opacity="0\.35"/opacity="0.40"/g
+
+SED (Linux/macOS):
+  sed -i 's/stroke-width="0\.6"/stroke-width="1"/g' *.svg
+  sed -i 's/<feOffset[^>]*dx="[^"]*"[^>]*dy="[^"]*"/<feOffset dx="0" dy="0"/g' *.svg
+  sed -i 's/opacity="0\.35"/opacity="0.40"/g' *.svg
+
+PERL (cross-platform):
+  perl -pi -e 's/stroke-width="0\.6"/stroke-width="1"/g' *.svg
+  perl -pi -e 's/<feOffset\s+dx="[^"]*"\s+dy="[^"]*"/<feOffset dx="0" dy="0"/g' *.svg
+  perl -pi -e 's/opacity="0\.35"/opacity="0.40"/g' *.svg
+
+VS CODE:
+  Find:    stroke-width="0\.6"
+  Replace: stroke-width="1"
+  Click "Replace All"
+
+  Find:    <feOffset\s+dx="[^"]*"\s+dy="[^"]*"
+  Replace: <feOffset dx="0" dy="0"
+  Enable Regex, Click "Replace All"
+
+  Find:    opacity="0\.35"
+  Replace: opacity="0.40"
+  Click "Replace All"
+
+================================================================================
+VERIFICATION AFTER EDITING
+================================================================================
+
+After applying all three replacements, verify the SVG file contains:
+  ✓ stroke-width="1" (not 0.6)
+  ✓ <feOffset dx="0" dy="0" (not dx="0.5" dy="0.8")
+  ✓ opacity="0.40" (not 0.35, if shadow existed)
+
+Then render the modified SVG to PNG/CUR using your normal pipeline.
+
+================================================================================
+USING build_gold.py (RECOMMENDED)
+================================================================================
+
+Instead of manual edits, you can use the provided build_gold.py:
+
+  python build_gold.py src/svg/ build/cursors/
+
+This automates all three replacements and can be integrated into your build
+pipeline.
+
+================================================================================

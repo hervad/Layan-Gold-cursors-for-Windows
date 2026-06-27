@@ -1,0 +1,81 @@
+================================================================================
+LAYAN GOLD v9 PATCH - CONCRETE DIFFS
+================================================================================
+
+VERDICT FIXES APPLIED:
+
+1. STROKE-WIDTH (Fix sub-pixel aliasing)
+   OLD: stroke-width="0.6"
+   NEW: stroke-width="1"
+   RATIONALE: 0.6 SVG units at 32px render = 0.38 actual pixels (sub-pixel,
+             causes aliasing). 1.0 = 1 pixel (clean rendering).
+
+2. SHADOW OFFSET (Fix asymmetric shadow)
+   OLD: <feOffset dx="0.5" dy="0.8" ... />
+   NEW: <feOffset dx="0" dy="0" ... />
+   RATIONALE: Offset caused shadow to not align with outline on bottom-right,
+             making top-left appear bare. Symmetric shadow fixes this.
+
+3. SHADOW OPACITY (Enhancement)
+   OLD: opacity="0.35"
+   NEW: opacity="0.40"
+   RATIONALE: Slightly more defined without over-darkening.
+
+4. OUTLINE COLOR (No change needed)
+   EXISTING: #FFF6E0 (cream)
+   STATUS: Correct per industry standard (Bibata, Phinger use white/cream
+          for gold outlines). Keep as-is.
+
+================================================================================
+FILE LOCATIONS
+================================================================================
+
+build_gold.py
+  - NEW file with two regexes to apply all fixes
+  - Two functions:
+    * goldify_svg(svg_text, render_size=32)
+    * process_svg_files(source_dir, output_dir, render_sizes)
+  - Usage: python build_gold.py src/svg/ build/cursors/
+
+PATCH_IMPLEMENTATION.md
+  - Detailed guide for verification, size-aware tuning, manual edits
+  - Verification checklist (light bg, dark bg, comparison)
+
+================================================================================
+DECISION TREE
+================================================================================
+
+Q: Keep the outline?
+A: YES. The outline is correct. The problem was rendering (aliasing), not design.
+
+Q: What if aliasing still visible after this patch?
+A: Increase stroke-width to 1.2, or render at higher DPI and downsample.
+
+Q: Size-specific stroke-width?
+A: Not in this patch (uses 1.0 for all sizes). See PATCH_IMPLEMENTATION.md
+   section "RENDER-SIZE-AWARE NOTES" if you need 32px→1.0, 64px→1.0, 128px→0.5.
+
+Q: Remove shadow entirely?
+A: No. Shadow is fine. Just make it symmetric (this patch does that).
+
+================================================================================
+VERIFICATION (After rendering)
+================================================================================
+
+32px on light background:
+  ✓ Outline visible, clean (not chunky or aliased)
+  ✓ Shadow symmetric blur
+  ✓ No bare edges on top-left
+  ✓ Gold body readable
+
+32px on dark background:
+  ✓ Outline (#FFF6E0) has contrast
+  ✓ Warm gold tone
+  ✓ Shadow doesn't create halo
+
+64px (all backgrounds):
+  ✓ Stroke-width=1 scales to ~2px (acceptable)
+  ✓ No aliasing at curves
+  ✓ Shadow symmetric
+
+================================================================================
