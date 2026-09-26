@@ -1,5 +1,3 @@
 __pycache__/
 *.pyc
-nul
-test_output*
-default_largest.png
+.claude/

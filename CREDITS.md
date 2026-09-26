@@ -1,23 +1,21 @@
-# Credits & attribution
+# Credits
 
-This project is a derivative work in a chain of free-software cursor themes. The artwork and code are inherited from several upstreams, each of which is credited below per their license requirements.
+Layan Cursors (Gold) builds on several free cursor themes.
 
-## Upstream chain
+1. **[KDE Breeze](https://invent.kde.org/plasma/breeze)**: the original cursor design.
+2. **[Capitaine Cursors](https://github.com/keeferrourke/capitaine-cursors)** by Keefer Rourke and contributors (LGPL-3.0-or-later), based on Breeze.
+3. **[Layan cursors](https://github.com/vinceliuice/Layan-cursors)** by vinceliuice (GPL-3.0), based on Capitaine Cursors. All artwork in this project comes from Layan's `src/svg` at commit `b8c4689`, vendored unmodified in [`src/svg`](src/svg).
+4. **[Layan cursors for Windows](https://github.com/emma-the-rock/Layan-cursors-for-Windows)** (GPL-3.0): the earlier Windows port, which chose which Layan shapes to use for each Windows role (for example, the corner shapes for diagonal resize). We use the same choices.
 
-1. **KDE Breeze icon theme** — the original silhouette and arrow geometry.
-2. **[Capitaine cursors](https://github.com/keeferrourke/capitaine-cursors)** — © 2016 Keefer Rourke and others. Licensed under **LGPL v3** (explicitly extended to artwork; see Capitaine's `COPYING`). The frame-by-frame `progress` and `wait` animation SVGs originate here.
-3. **[Layan cursors (Linux)](https://github.com/vinceliuice/Layan-cursors)** — © vinceliuice. A monochrome / themed adaptation of Capitaine.
-4. **[Layan cursors for Windows](https://github.com/karaksid/Layan-cursors-for-Windows)** — the Windows `.cur`/`.ani` port via [`win2xcur`](https://pypi.org/project/win2xcur/). Licensed under **GPL v3**.
-5. **Layan Gold cursors for Windows** (this repo) — palette v11 (dark-gold orange-shifted), HiDPI sizes 32/40/48/64/96/128 px, edge morphing for crisper outlines.
+## This project
 
-## Modifications in this repo
+The gold edition is by [hervad](https://github.com/hervad):
 
-- Replaced Layan's original palette with the v11 gold gradient (see `README.md` table).
-- Adjusted stroke-width handling and symmetric drop-shadow in `build_gold.py`.
-- Added high-DPI sizes (40/48/64/96/128 px) beyond upstream's 32 px.
-- Added `morph_cursor_edge.py` for outline anti-aliasing improvements.
-- Added `verify_install.py` for post-install sanity checking.
+- `build.py` recolors Layan's gradients to gold, adds the brown outline, and enlarges and embosses the help "?"
+- It renders every cursor at the sizes Windows requests, from 32 to 256 px
+- Pointer hotspots are measured at each shape's tip
+- It generates the installer and uninstaller
 
 ## License
 
-This work is distributed under **GPL v3** (see [`LICENSE`](LICENSE)). The underlying artwork retains its **LGPL v3** roots from Capitaine; per LGPL v3, source files (SVG / build scripts) are included alongside the binaries.
+Distributed under the **GNU General Public License v3.0**, the license of Layan cursors. See [LICENSE](LICENSE). The SVG sources and build script are included, so everything can be rebuilt and modified.
